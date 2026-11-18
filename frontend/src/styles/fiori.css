@@ -27,6 +27,7 @@
   --brand-hover: #0064d9;
   --brand-soft: #ebf8ff;
   --brand-text: #ffffff;
+  --brand-2: #7858ff;
   --link: #0064d9;
   --focus: #0032a5;
 
@@ -70,6 +71,7 @@
   --brand-hover: #74c2ff;
   --brand-soft: #16324d;
   --brand-text: #12171c;
+  --brand-2: #9a85ff;
   --link: #4db1ff;
   --focus: #a6cfff;
 
@@ -113,6 +115,7 @@
   --brand-hover: #ffe24d;
   --brand-soft: #2b2500;
   --brand-text: #000000;
+  --brand-2: #ffe24d;
   --link: #ffd400;
   --focus: #ffffff;
   --positive: #6fff9f;
@@ -854,6 +857,7 @@ table.tbl {
 }
 .footer-bar .btn {
   height: 2.5rem;
+  flex: none;
 }
 .footer-bar .msg {
   color: var(--text-2);
@@ -906,7 +910,7 @@ table.tbl {
 body {
   background:
     radial-gradient(60rem 30rem at 100% -10%, color-mix(in srgb, var(--brand) 7%, transparent), transparent 70%),
-    radial-gradient(50rem 30rem at -10% 110%, color-mix(in srgb, #7858ff 6%, transparent), transparent 70%),
+    radial-gradient(50rem 30rem at -10% 110%, color-mix(in srgb, var(--brand-2) 6%, transparent), transparent 70%),
     var(--bg);
   background-attachment: fixed;
 }
@@ -934,7 +938,7 @@ body {
 }
 .top-loader::before {
   content: ''; position: absolute; inset: 0; width: 40%;
-  background: linear-gradient(90deg, transparent, var(--brand), #7858ff, transparent);
+  background: linear-gradient(90deg, transparent, var(--brand), var(--brand-2), transparent);
   animation: loader 1.1s var(--ease) infinite;
 }
 @keyframes loader { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
@@ -1027,7 +1031,7 @@ body {
 
 /* Gradient text */
 .grad-text {
-  background: linear-gradient(90deg, var(--text) 0%, var(--brand) 60%, #7858ff 100%);
+  background: linear-gradient(90deg, var(--text) 0%, var(--brand) 60%, var(--brand-2) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 

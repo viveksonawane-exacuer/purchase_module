@@ -35,6 +35,7 @@
 </template>
 
 <script setup>
+import { rowMatches } from '../search'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Icon from '../components/Icon.vue'
@@ -51,7 +52,7 @@ function setGroup(g) {
 const shown = computed(() => {
   const s = q.value.trim().toLowerCase()
   return REPORT_GROUPS.filter((g) => !group.value || g.key === group.value)
-    .map((g) => ({ ...g, reports: g.reports.filter((r) => !s || `${r.name} ${r.desc}`.toLowerCase().includes(s)) }))
+    .map((g) => ({ ...g, reports: g.reports.filter((r) => rowMatches({ ...r, group: g.label }, s, ['name', 'desc', 'group'])) }))
     .filter((g) => g.reports.length)
 })
 </script>
@@ -72,7 +73,7 @@ const shown = computed(() => {
   animation: fade-up 0.35s var(--ease) both; animation-delay: calc(var(--i) * 35ms);
 }
 .rcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); text-decoration: none; }
-.rcard-ico { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; flex: none; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), #7858ff); }
+.rcard-ico { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; flex: none; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .rcard-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.125rem; }
 .rcard-body small { font-size: 0.8125rem; line-height: 1.35; }
 .go { color: var(--text-3); transition: transform 0.2s var(--ease), color 0.2s; }

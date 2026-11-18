@@ -647,13 +647,13 @@ def _document_flow(doc):
 		)
 
 	return [
-		{"step": "Purchase Requisition", "doctype": "Material Request", "docs": _doc_brief("Material Request", mr)},
-		{"step": "RFQ", "doctype": "Request for Quotation", "docs": _doc_brief("Request for Quotation", rfq)},
+		{"step": "Material Request", "doctype": "Material Request", "docs": _doc_brief("Material Request", mr)},
+		{"step": "Request for Quotation", "doctype": "Request for Quotation", "docs": _doc_brief("Request for Quotation", rfq)},
 		{"step": "Supplier Quotation", "doctype": "Supplier Quotation", "docs": _doc_brief("Supplier Quotation", sq)},
 		{"step": "Purchase Order", "doctype": "Purchase Order", "docs": _doc_brief("Purchase Order", po)},
-		{"step": "Goods Receipt", "doctype": "Purchase Receipt", "docs": _doc_brief("Purchase Receipt", prc)},
-		{"step": "Invoice", "doctype": "Purchase Invoice", "docs": _doc_brief("Purchase Invoice", pi)},
-		{"step": "Payment", "doctype": "Payment Entry", "docs": _doc_brief("Payment Entry", pe)},
+		{"step": "Purchase Receipt", "doctype": "Purchase Receipt", "docs": _doc_brief("Purchase Receipt", prc)},
+		{"step": "Purchase Invoice", "doctype": "Purchase Invoice", "docs": _doc_brief("Purchase Invoice", pi)},
+		{"step": "Payment Entry", "doctype": "Payment Entry", "docs": _doc_brief("Payment Entry", pe)},
 	]
 
 
@@ -702,11 +702,11 @@ def _allowed_actions(doc):
 
 	if dt == "Purchase Order":
 		if status in ("To Receive and Bill", "To Receive"):
-			add("make_pr", _("Post Goods Receipt"), "emphasized", "Purchase Receipt")
+			add("make_pr", _("Create Purchase Receipt"), "emphasized", "Purchase Receipt")
 		if status in ("To Receive and Bill", "To Bill"):
-			add("make_pi", _("Create Invoice"), "default", "Purchase Invoice")
+			add("make_pi", _("Create Purchase Invoice"), "default", "Purchase Invoice")
 		if flt(doc.get("per_billed")) < 100 and status not in ("Closed", "On Hold"):
-			add("make_payment", _("Advance Payment"), "default", "Payment Entry")
+			add("make_payment", _("Advance Payment Entry"), "default", "Payment Entry")
 		if status not in ("Closed", "Completed", "On Hold") and can("submit"):
 			add("hold", _("Hold"), "transparent")
 			add("close", _("Close"), "transparent")
@@ -714,14 +714,81 @@ def _allowed_actions(doc):
 			add("resume", _("Re-open"))
 
 	if dt == "Purchase Receipt" and status in ("To Bill", "Partly Billed"):
-		add("make_pi", _("Create Invoice"), "emphasized", "Purchase Invoice")
+		add("make_pi", _("Create Purchase Invoice"), "emphasized", "Purchase Invoice")
 
 	if dt == "Purchase Invoice" and flt(doc.get("outstanding_amount")) > 0:
-		add("make_payment", _("Post Payment"), "emphasized", "Payment Entry")
+		add("make_payment", _("Create Payment Entry"), "emphasized", "Payment Entry")
 
 	if can("cancel"):
 		add("cancel", _("Cancel"), "negative")
 	return actions
+
+
+@frappe.whitelist()
+def rfq_supplier_hints(material_request):
+	"""Suppliers to pre-fill when raising an RFQ: each item's default supplier for the
+	company, then suppliers who most recently quoted or were ordered these items."""
+	frappe.has_permission("Material Request", "read", doc=material_request, throw=True)
+	mr = frappe.get_doc("Material Request", material_request)
+	codes = list({i.item_code for i in mr.items}) or [""]
+	out = frappe.get_all(
+		"Item Default",
+		filters={"parent": ["in", codes], "company": mr.company, "default_supplier": ["is", "set"]},
+		pluck="default_supplier",
+	)
+	for dt, child in (("Supplier Quotation", "Supplier Quotation Item"), ("Purchase Order", "Purchase Order Item")):
+		p, c = frappe.qb.DocType(dt), frappe.qb.DocType(child)
+		rows = (
+			frappe.qb.from_(c)
+			.join(p)
+			.on(p.name == c.parent)
+			.select(p.supplier)
+			.where((c.item_code.isin(codes)) & (p.docstatus == 1) & (p.company == mr.company))
+			.orderby(p.modified, order=frappe.qb.desc)
+			.limit(20)
+		).run(pluck=True)
+		out += rows
+	seen = []
+	for s in out:
+		if s and s not in seen and not frappe.db.get_value("Supplier", s, "disabled"):
+			seen.append(s)
+	return seen[:3]
+
+
+
+REQUIRED_BY_DOCTYPES = ("Material Request", "Request for Quotation", "Supplier Quotation", "Purchase Order")
+
+
+def _stale_required_by(doc):
+	"""Rows whose Required By date (own, or inherited from the Material Request line the row
+	came from) is already in the past. ERPNext refuses to create a Purchase Order from them."""
+	today = getdate(nowdate())
+	mr_rows = [i.get("material_request_item") for i in doc.get("items") or [] if i.get("material_request_item")]
+	mr_dates = (
+		dict(frappe.get_all("Material Request Item", filters={"name": ["in", mr_rows]}, fields=["name", "schedule_date"], as_list=True))
+		if mr_rows
+		else {}
+	)
+	out = []
+	for i in doc.get("items") or []:
+		d = i.get("schedule_date") or mr_dates.get(i.get("material_request_item"))
+		if d and getdate(d) < today:
+			out.append({"idx": i.get("idx"), "item_code": i.get("item_code"), "item_name": i.get("item_name") or i.get("item_code"), "date": str(getdate(d))})
+	return out
+
+
+@frappe.whitelist()
+def required_by_check(doctype, name=None, doc=None):
+	"""Pre-flight for submit / Create PO: list item rows whose Required By date has passed."""
+	if doctype not in REQUIRED_BY_DOCTYPES:
+		return {"rows": [], "today": nowdate()}
+	if name:
+		d = frappe.get_doc(doctype, name)
+		d.check_permission("read")
+	else:
+		d = frappe._dict(_parse(doc) or {})
+		frappe.has_permission(doctype, "create", throw=True)
+	return {"rows": _stale_required_by(d), "today": nowdate()}
 
 
 @frappe.whitelist(methods=["POST"])
@@ -801,6 +868,8 @@ def run_action(doctype, name, action, args=None):
 		target = mapper(name)
 		if isinstance(target, dict):
 			target = frappe.get_doc(target)
+		if target_dt == "Request for Quotation" and not args.get("suppliers"):
+			frappe.throw(_("Choose at least one supplier to invite to the RFQ"))
 		if target_dt == "Request for Quotation" and args.get("suppliers"):
 			target.set("suppliers", [])
 			for s in args["suppliers"]:
@@ -809,6 +878,25 @@ def run_action(doctype, name, action, args=None):
 			target.message_for_supplier = _("Please share your best quotation for the items below.")
 		if args.get("supplier") and target.meta.has_field("supplier"):
 			target.supplier = args["supplier"]
+		if target_dt == "Purchase Order":
+			# Required By inherited from an old requisition may already be past: move those rows
+			# to the date the buyer picked (or tell them to pick one) instead of failing on save
+			floor = getdate(target.transaction_date or nowdate())
+			new_date = getdate(args["schedule_date"]) if args.get("schedule_date") else None
+			if new_date and new_date < floor:
+				frappe.throw(_("Required By cannot be before the order date {0}").format(frappe.format(floor, "Date")))
+			stale = [r for r in target.items if r.schedule_date and getdate(r.schedule_date) < floor]
+			if stale and not new_date:
+				frappe.throw(
+					_("Required By on row(s) {0} is before today. Pick a new Required By date to create the Purchase Order.").format(
+						", ".join(str(r.idx) for r in stale)
+					),
+					title=_("Required By date has passed"),
+				)
+			for r in stale:
+				r.schedule_date = new_date
+			if target.items:
+				target.schedule_date = min(getdate(r.schedule_date) for r in target.items if r.schedule_date)
 		target.insert()
 		return {
 			"doctype": target_dt,
@@ -920,11 +1008,23 @@ def inventory_overview(warehouse=None, search=None):
 		filters["warehouse"] = warehouse
 	if warehouses is not None:
 		filters["warehouse"] = ["in", [w for w in warehouses if not warehouse or w == warehouse] or [""]]
-	if search:
-		filters["item_code"] = ["like", f"%{search}%"]
+	or_filters = None
+	if search and search.strip():
+		# universal search: item code / name / group / UoM / brand / description, or warehouse
+		like = f"%{search.strip()}%"
+		codes = frappe.get_all(
+			"Item",
+			or_filters=[[f, "like", like] for f in ("name", "item_name", "item_group", "stock_uom", "brand", "description")],
+			pluck="name",
+			limit_page_length=1000,
+		)
+		or_filters = [["item_code", "like", like], ["warehouse", "like", like]]
+		if codes:
+			or_filters.append(["item_code", "in", codes])
 	bins = frappe.get_list(
 		"Bin",
 		filters=filters,
+		or_filters=or_filters,
 		fields=[
 			"item_code",
 			"warehouse",

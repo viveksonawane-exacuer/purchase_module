@@ -1,1 +1,0 @@
-import{b as c,c as n,t as u,e as r,q as a,aa as l}from"./index-0-NqcCb9.js";const i={__name:"StatusBadge",props:{status:String,docstatus:Number},setup(e){const t=e,s=a(()=>t.status||["Draft","Submitted","Cancelled"][t.docstatus??0]),o=a(()=>l(s.value,t.docstatus));return(p,m)=>(c(),n("span",{class:r(["status",o.value])},u(s.value),3))}};export{i as _};

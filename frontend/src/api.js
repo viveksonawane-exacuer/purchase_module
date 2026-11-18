@@ -87,6 +87,8 @@ export const api = {
   setCompany: (company) => call(M + 'set_company', { company }, { post: true }),
   reorderOverview: () => call(M + 'reorder_overview'),
   createReorderRequests: (rows) => call(M + 'create_reorder_requests', { rows }, { post: true }),
+  requiredByCheck: (doctype, args) => call(M + 'required_by_check', { doctype, ...args }, { post: !!args.doc, silent: true }),
+  rfqSupplierHints: (material_request) => call(M + 'rfq_supplier_hints', { material_request }, { silent: true, background: true }),
   itemStock: (item_code) => call(M + 'item_stock_detail', { item_code }),
   finance: () => call(M + 'finance_overview'),
   doctypeDashboard: (module, months) => call(M + 'doctype_dashboard', { module, months }),
@@ -102,11 +104,15 @@ export const api = {
       doctype,
       fields: opts.fields,
       filters: opts.filters,
+      or_filters: opts.or_filters?.length ? opts.or_filters : undefined,
       order_by: opts.order_by,
       limit_start: opts.start || 0,
       limit_page_length: opts.limit || 20,
     }),
-  getCount: (doctype, filters) => call('frappe.client.get_count', { doctype, filters }),
+  getCount: (doctype, filters, or_filters) =>
+    or_filters?.length
+      ? call('frappe.desk.reportview.get_count', { doctype, filters, or_filters })
+      : call('frappe.client.get_count', { doctype, filters }),
   searchLink: (doctype, txt, filters) =>
     call('frappe.desk.search.search_link', { doctype, txt, filters, page_length: 12 }, { silent: true }),
   addComment: (doctype, name, content) =>

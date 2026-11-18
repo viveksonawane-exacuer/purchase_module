@@ -109,7 +109,7 @@ onMounted(async () => (data.value = await api.vendorDashboard()))
 <style scoped>
 .hero { display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem 1.75rem; margin-bottom: 1rem; border-radius: var(--radius-l); background: var(--surface); background-image: var(--hero-grad); box-shadow: var(--shadow-1); }
 .hero h1 { font-size: 1.75rem; }
-.logo-sup { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #0070f2, #00a99d); }
+.logo-sup { width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem; margin-bottom: 1rem; }
 .kpi { display: flex; gap: 0.875rem; align-items: center; padding: 1rem; border: 2px solid transparent; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-1); cursor: pointer; font: inherit; color: var(--text); }
 .kpi { position: relative; overflow: hidden; transition: transform 0.2s var(--ease), box-shadow 0.2s; }

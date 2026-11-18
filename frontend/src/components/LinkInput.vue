@@ -49,6 +49,7 @@
 <script setup>
 import { nextTick, ref, watch } from 'vue'
 import { api } from '../api'
+import { state } from '../store'
 import Icon from './Icon.vue'
 import { usePopover } from './popover'
 
@@ -76,6 +77,20 @@ function hl(s) {
 
 const { pos, place } = usePopover(inp, list, open, close)
 
+// Doctypes owned by a company: only offer records of the company selected in the shell
+const COMPANY_DOCTYPES = new Set([
+  'Warehouse', 'Account', 'Cost Center', 'Bank Account', 'Project', 'Department',
+  'Purchase Taxes and Charges Template', 'Asset', 'Finance Book',
+])
+function effectiveFilters() {
+  const f = { ...(props.filters || {}) }
+  const company = state.boot?.company
+  if (company && COMPANY_DOCTYPES.has(props.doctype) && !('company' in f)) f.company = company
+  // stock is held in leaf warehouses only
+  if (props.doctype === 'Warehouse' && !('is_group' in f)) f.is_group = 0
+  return Object.keys(f).length ? f : undefined
+}
+
 // ---- search ----
 let t
 let seq = 0
@@ -83,7 +98,7 @@ async function search(q) {
   const my = ++seq
   loading.value = true
   try {
-    const r = (await api.searchLink(props.doctype, q, props.filters)) || []
+    const r = (await api.searchLink(props.doctype, q, effectiveFilters())) || []
     if (my === seq) opts.value = r
   } catch {
     if (my === seq) opts.value = []

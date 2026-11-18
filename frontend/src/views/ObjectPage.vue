@@ -26,7 +26,6 @@
               <StatusBadge :status="doc.status" :docstatus="doc.docstatus" />
             </div>
             <div class="muted row wrap" style="gap: 0.5rem">
-              <span class="dt-chip" title="DocType in ERPNext Desk"><Icon name="Layers" :size="12" /> {{ m.doctype }}</span>
               <span v-if="subtitle">{{ subtitle }}</span>
             </div>
           </div>
@@ -111,7 +110,7 @@
             <div class="spacer" />
             <div v-if="(doc.items || []).length > 5" class="mini-search">
               <Icon name="Search" :size="14" />
-              <input v-model="itemQuery" class="input compact" placeholder="Filter items…" />
+              <input v-model="itemQuery" class="input compact" placeholder="Search items, UoM, warehouse, qty…" />
             </div>
           </div>
           <div class="table-wrap">
@@ -284,10 +283,21 @@
       </div>
 
       <!-- Footer toolbar -->
-      <div v-if="data.actions.length" class="footer-bar" :class="{ infcl: inFcl && !full }">
-        <span class="msg"><Icon name="Info" :size="14" /> {{ footerHint }}</span>
-        <div class="spacer" />
-        <button v-for="a in data.actions" :key="a.key" class="btn" :class="'btn-' + a.type" :disabled="busy" @click="run(a)">{{ a.label }}</button>
+      <div v-if="data.actions.length" ref="barEl" class="footer-bar" :class="{ infcl: inFcl && !full }">
+        <span class="msg" :title="footerHint"><Icon name="Info" :size="14" /> <span>{{ footerHint }}</span></span>
+        <button v-for="a in shownActions" :key="a.key" class="btn" :class="'btn-' + a.type" :disabled="busy" @click="run(a)">{{ a.label }}</button>
+        <div v-if="moreActions.length" class="more-wrap">
+          <button class="btn btn-transparent btn-icon" :class="{ on: moreOpen }" title="More actions" aria-haspopup="menu" :aria-expanded="moreOpen" @click.stop="moreOpen = !moreOpen">
+            <Icon name="MoreHorizontal" />
+          </button>
+          <div v-if="moreOpen" class="more-menu" role="menu">
+            <button v-for="a in moreActions" :key="a.key" class="more-item" :class="{ neg: a.type === 'negative' }" role="menuitem" :disabled="busy" @click="moreOpen = false; run(a)">{{ a.label }}</button>
+          </div>
+        </div>
+        <!-- off-screen copy used to measure each button's natural width -->
+        <div ref="measureEl" class="btn-measure" aria-hidden="true">
+          <span v-for="a in data.actions" :key="a.key" class="btn" :class="'btn-' + a.type">{{ a.label }}</span>
+        </div>
       </div>
     </template>
 
@@ -297,10 +307,21 @@
         <div class="dialog">
           <header><Icon name="Building2" /><h3>{{ pick.title }}</h3></header>
           <div class="dialog-body">
-            <div class="field"><label class="req">Supplier</label><LinkInput v-model="pick.supplier" doctype="Supplier" :filters="pick.filters" /></div>
+            <template v-if="pick.multi">
+              <div class="field">
+                <label class="req">Suppliers to invite</label>
+                <LinkInput v-model="pick.supplier" doctype="Supplier" :filters="{ ...(pick.filters || {}), name: ['not in', pick.list.length ? pick.list : ['']] }" placeholder="Add a supplier…" @select="addPicked" />
+              </div>
+              <div v-if="pick.list.length" class="picked">
+                <span v-for="s in pick.list" :key="s" class="pchip">{{ s }}<button type="button" :aria-label="`Remove ${s}`" @click="pick.list = pick.list.filter((x) => x !== s)"><Icon name="X" :size="12" /></button></span>
+              </div>
+              <p v-else class="muted pick-hint">Add one or more suppliers. Each one gets the RFQ to quote against.</p>
+            </template>
+            <div v-else class="field"><label class="req">Supplier</label><LinkInput v-model="pick.supplier" doctype="Supplier" :filters="pick.filters" /></div>
           </div>
           <footer>
-            <button class="btn btn-emphasized" :disabled="!pick.supplier" @click="pick.resolve(pick.supplier); pick = null">Continue</button>
+            <button v-if="pick.multi" class="btn btn-emphasized" :disabled="!pick.list.length" @click="pick.resolve([...pick.list]); pick = null">Create RFQ ({{ pick.list.length }})</button>
+            <button v-else class="btn btn-emphasized" :disabled="!pick.supplier" @click="pick.resolve(pick.supplier); pick = null">Continue</button>
             <button class="btn btn-transparent" @click="pick.resolve(null); pick = null">Cancel</button>
           </footer>
         </div>
@@ -310,6 +331,8 @@
 </template>
 
 <script setup>
+import { askPoRequiredBy, confirmSubmitWithDates } from '../requiredBy'
+import { rowMatches } from '../search'
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { api, pdfUrl } from '../api'
@@ -336,6 +359,59 @@ const sup = computed(() => data.value?.supplier)
 const busy = ref(false)
 const comment = ref('')
 const pick = ref(null)
+
+// ---- footer actions: keep labels whole; overflow the least important into a "More" menu ----
+const barEl = ref(null)
+const measureEl = ref(null)
+const hidden = ref(new Set())
+const moreOpen = ref(false)
+const RANK = { emphasized: 0, default: 1, negative: 2, transparent: 3 }
+const shownActions = computed(() => (data.value?.actions || []).filter((a) => !hidden.value.has(a.key)))
+const moreActions = computed(() => (data.value?.actions || []).filter((a) => hidden.value.has(a.key)))
+function fitActions() {
+  const bar = barEl.value
+  const meas = measureEl.value
+  const acts = data.value?.actions || []
+  if (!bar || !meas || !acts.length) return
+  const cs = getComputedStyle(bar)
+  const gap = parseFloat(cs.columnGap) || 8
+  const inner = bar.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+  const reserve = inner > 640 ? 150 : 0 // room for the status hint on wide bars
+  const widths = Object.fromEntries([...meas.children].map((el, i) => [acts[i]?.key, el.offsetWidth]))
+  const need = (list, more) => list.reduce((s, a) => s + widths[a.key] + gap, 0) + (more ? 40 + gap : 0)
+  // drop the lowest-priority actions (last first within a rank) until the rest fit
+  const order = acts.map((a, i) => ({ a, i })).sort((x, y) => (RANK[y.a.type] ?? 1) - (RANK[x.a.type] ?? 1) || y.i - x.i)
+  const out = new Set()
+  let keep = [...acts]
+  for (const { a } of order) {
+    if (need(keep, out.size > 0) <= inner - reserve || keep.length <= 1) break
+    out.add(a.key)
+    keep = keep.filter((k) => k.key !== a.key)
+  }
+  hidden.value = out
+}
+let ro
+function closeMore(e) {
+  if (!e.target.closest?.('.more-wrap')) moreOpen.value = false
+}
+onMounted(() => {
+  ro = new ResizeObserver(() => fitActions())
+  addEventListener('click', closeMore)
+  document.fonts?.ready.then(() => fitActions())
+})
+onBeforeUnmount(() => {
+  ro?.disconnect()
+  removeEventListener('click', closeMore)
+})
+watch(barEl, (el, old) => {
+  if (old) ro?.unobserve(old)
+  if (el) ro?.observe(el)
+})
+watch(() => (data.value?.actions || []).map((a) => a.key + a.label).join('|'), async () => {
+  moreOpen.value = false
+  await nextTick()
+  fitActions()
+})
 const snapped = ref(false)
 const activeSection = ref('')
 const fmeta = ref(null)
@@ -381,7 +457,7 @@ const itemCols = computed(() => {
 const shownItems = computed(() => {
   const q = itemQuery.value.trim().toLowerCase()
   const items = doc.value.items || []
-  return q ? items.filter((i) => `${i.item_code} ${i.item_name}`.toLowerCase().includes(q)) : items
+  return q ? items.filter((i) => rowMatches(i, q)) : items
 })
 const sections = computed(() => {
   const s = data.value?.flow.length ? [{ id: 'sec-flow', label: 'Document Flow' }] : []
@@ -500,6 +576,13 @@ async function load() {
 function askSupplier(title, filters) {
   return new Promise((resolve) => (pick.value = { title, supplier: '', filters, resolve }))
 }
+function askSuppliers(title, preset = []) {
+  return new Promise((resolve) => (pick.value = { title, supplier: '', multi: true, list: [...new Set(preset)], resolve }))
+}
+function addPicked(o) {
+  if (o?.value && !pick.value.list.includes(o.value)) pick.value.list = [...pick.value.list, o.value]
+  setTimeout(() => pick.value && (pick.value.supplier = ''))
+}
 async function run(a) {
   const dt = m.value.doctype
   const args = {}
@@ -515,13 +598,27 @@ async function run(a) {
     args.reason = reason === true ? '' : reason
   }
   if (a.key === 'submit') {
-    const ok = await confirmBox({ title: a.label, message: `Submit ${doc.value.name}? Submitted documents can only be cancelled, not edited.`, confirmText: a.label })
-    if (!ok) return
+    const warned = await confirmSubmitWithDates(dt, doc.value.name, doc.value.name)
+    if (warned === false) return
+    if (warned === null) {
+      const ok = await confirmBox({ title: a.label, message: `Submit ${doc.value.name}? Submitted documents can only be cancelled, not edited.`, confirmText: a.label })
+      if (!ok) return
+    }
+  }
+  if (a.key === 'make_po') {
+    const d = await askPoRequiredBy(dt, doc.value.name)
+    if (!d) return
+    Object.assign(args, d)
   }
   if (dt === 'Material Request' && ['make_po', 'make_sq'].includes(a.key)) {
     const s = await askSupplier(a.key === 'make_po' ? 'Create Purchase Order for supplier' : 'Record quotation from supplier')
     if (!s) return
     args.supplier = s
+  }
+  if (dt === 'Material Request' && a.key === 'make_rfq') {
+    const list = await askSuppliers('Create RFQ: invite suppliers', await api.rfqSupplierHints(doc.value.name).catch(() => []))
+    if (!list) return
+    args.suppliers = list
   }
   if (dt === 'Request for Quotation' && a.key === 'record_quote') {
     const invited = (doc.value.suppliers || []).map((x) => x.supplier)
@@ -697,7 +794,7 @@ onBeforeUnmount(() => {
 .sup { display: grid; grid-template-columns: minmax(14rem, 1fr) 2fr; gap: 1.5rem; align-items: center; }
 @media (max-width: 900px) { .sup { grid-template-columns: 1fr; } }
 .sup-id { display: flex; gap: 0.875rem; align-items: center; min-width: 0; }
-.sup-avatar { width: 3rem; height: 3rem; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, #0070f2, #00a99d); }
+.sup-avatar { width: 3rem; height: 3rem; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .sup-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
 @media (max-width: 560px) { .sup-stats { grid-template-columns: 1fr; } }
 .sstat { position: relative; overflow: hidden; padding: 0.75rem 0.875rem; border-radius: 0.625rem; background: var(--surface-2); display: flex; flex-direction: column; }
@@ -741,6 +838,20 @@ kbd { font: 600 0.6875rem var(--font); padding: 0.0625rem 0.3125rem; border: 1px
   width: auto; margin: 0.5rem 2rem 0; animation-name: footer-in-r;
 }
 .in-fcl .footer-bar { margin: 0.5rem 1.25rem 0; }
+.footer-bar { overflow: visible; }
+.footer-bar .msg { flex: 1 1 auto; min-width: 0; }
+.footer-bar .msg > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.footer-bar > .btn { flex: none; }
+.btn-measure { position: absolute; left: 0; top: 0; visibility: hidden; pointer-events: none; display: flex; gap: 0.5rem; white-space: nowrap; height: 0; overflow: hidden; }
+.btn-measure .btn { flex: none; height: 2.5rem; }
+.more-wrap { position: relative; flex: none; }
+.more-wrap .btn-icon { height: 2.5rem; width: 2.5rem; }
+.more-wrap .btn-icon.on { background: var(--surface-hover); }
+.more-menu { position: absolute; right: 0; bottom: calc(100% + 0.5rem); min-width: 13rem; padding: 0.375rem; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); box-shadow: var(--shadow-3); z-index: 60; animation: pop-in 0.16s var(--ease) both; transform-origin: bottom right; }
+.more-item { display: block; width: 100%; text-align: left; padding: 0.5rem 0.75rem; border: 0; border-radius: 0.375rem; background: none; color: var(--text); font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer; }
+.more-item:hover { background: var(--surface-hover); }
+.more-item.neg { color: var(--negative); }
+.more-item:disabled { opacity: 0.45; cursor: not-allowed; }
 @media (max-width: 720px) { .footer-bar, .in-fcl .footer-bar { margin: 0.5rem 0.75rem 0; bottom: 0.5rem; } }
 @media (max-width: 720px) {
   .op-header { padding: 0.75rem 1rem 0.25rem; }
@@ -753,5 +864,10 @@ kbd { font: 600 0.6875rem var(--font); padding: 0.0625rem 0.3125rem; border: 1px
 .dialog header { display: flex; gap: 0.5rem; align-items: center; padding: 1rem 1.25rem; border-bottom: 3px solid var(--brand); }
 .dialog header h3 { font-size: 1rem; }
 .dialog-body { padding: 1rem 1.25rem 1.5rem; }
+.picked { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
+.pchip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.25rem 0.375rem 0.25rem 0.625rem; border-radius: 999px; background: var(--neutral-bg); font-size: 0.8125rem; font-weight: 600; }
+.pchip button { display: grid; place-items: center; width: 1.25rem; height: 1.25rem; border: 0; border-radius: 50%; background: transparent; color: var(--text-2); cursor: pointer; }
+.pchip button:hover { background: var(--surface-2); color: var(--text-1); }
+.pick-hint { margin-top: 0.625rem; font-size: 0.8125rem; }
 .dialog footer { display: flex; justify-content: flex-end; gap: 0.5rem; padding: 0.75rem 1.25rem; background: var(--surface-2); border-radius: 0 0 var(--radius) var(--radius); }
 </style>

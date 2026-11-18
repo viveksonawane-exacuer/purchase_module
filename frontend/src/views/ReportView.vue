@@ -11,7 +11,6 @@
         <div style="min-width: 0">
           <h1 class="page-title">{{ name }}</h1>
           <div class="muted row wrap" style="gap: 0.5rem; font-size: 0.8125rem">
-            <span class="dt-chip" title="Report in ERPNext Desk"><Icon name="FileSpreadsheet" :size="12" /> Report</span>
             <span>{{ info.desc }}</span>
           </div>
         </div>
@@ -140,6 +139,7 @@
 </template>
 
 <script setup>
+import { rowMatches } from '../search'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { api } from '../api'
 import AnimatedNumber from '../components/AnimatedNumber.vue'
@@ -293,7 +293,7 @@ const rows = computed(() => {
 const filtered = computed(() => {
   const s = q.value.trim().toLowerCase()
   let r = rows.value
-  if (s) r = r.filter((x) => x.__total || cols.value.some((c) => String(x[c.fieldname] ?? '').toLowerCase().includes(s)))
+  if (s) r = r.filter((x) => x.__total || rowMatches(x, s, cols.value.map((c) => c.fieldname)))
   if (sort.key) {
     const k = sort.key
     const body = r.filter((x) => !x.__total)
@@ -416,7 +416,7 @@ onBeforeUnmount(() => removeEventListener('keydown', onKey))
 
 <style scoped>
 .rv { max-width: 1600px; margin: 0 auto; }
-.hd-ico { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; flex: none; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), #7858ff); }
+.hd-ico { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; flex: none; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .spin { animation: vh-spin 0.8s linear infinite; }
 .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: 0.875rem 1rem; margin-top: 1.25rem; align-items: end; }
 .f-actions { display: flex; gap: 0.25rem; align-items: center; justify-content: flex-end; grid-column: -2 / -1; }

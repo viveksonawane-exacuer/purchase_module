@@ -14,7 +14,7 @@
         <div class="kpi-card spot"><span class="ico"><Icon name="Truck" /></span><div><div class="k">Qty on Order</div><div class="v"><AnimatedNumber :value="data?.totals.on_order || 0" /></div></div></div>
       </div>
       <div class="filterbar">
-        <div class="field"><label>Item</label><input v-model="search" class="input" placeholder="Item code…" @keydown.enter="load" /></div>
+        <div class="field"><label>Item</label><input v-model="search" class="input" placeholder="Item, group, UoM, warehouse…" title="Searches: Item Code, Item Name, Item Group, UoM, Brand, Description, Warehouse" @input="onSearchInput" @keydown.enter="load" /></div>
         <div class="field"><label>Warehouse</label><LinkInput v-model="warehouse" doctype="Warehouse" @select="load" /></div>
         <div class="row" style="align-self: end"><button class="btn btn-emphasized" @click="load">Go</button><button class="btn btn-transparent" @click="search = ''; warehouse = ''; load()">Clear</button></div>
       </div>
@@ -77,7 +77,13 @@ provide('stockNav', {
   items: computed(() => [...new Set((data.value?.bins || []).map((r) => r.item_code))]),
   go: openItem,
 })
+let searchTimer
+function onSearchInput() {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(load, 350)
+}
 async function load() {
+  clearTimeout(searchTimer)
   data.value = await api.inventory(warehouse.value || undefined, search.value || undefined)
 }
 onMounted(load)

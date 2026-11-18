@@ -11,7 +11,6 @@
         <span class="hd-ico"><Icon :name="m.icon" :size="20" /></span>
         <h1 class="page-title">{{ isNew ? `New ${m.singular}` : `Edit ${docLabel}` }}</h1>
         <span class="status">{{ isNew ? 'Not Saved' : 'Draft' }}</span>
-        <span class="dt-chip" title="DocType in ERPNext Desk"><Icon name="Layers" :size="12" /> {{ m.doctype }}</span>
         <span v-if="previewing" class="sync"><span class="btn-spin" /> Updating…</span>
         <div class="spacer" />
         <span v-if="doc.company" class="co-chip" title="Company"><Icon name="Building2" :size="14" /> {{ doc.company }}</span>
@@ -72,6 +71,7 @@
 </template>
 
 <script setup>
+import { confirmSubmitWithDates } from '../requiredBy'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
@@ -190,8 +190,12 @@ async function save(submit) {
     return revealErrors()
   }
   if (submit) {
-    const ok = await confirmBox({ title: `Submit ${m.value.singular}`, message: 'Submitted documents are posted and can no longer be edited.', confirmText: 'Submit' })
-    if (!ok) return
+    const warned = await confirmSubmitWithDates(m.value.doctype, payload(), `this ${m.value.singular}`)
+    if (warned === false) return
+    if (warned === null) {
+      const ok = await confirmBox({ title: `Submit ${m.value.singular}`, message: 'Submitted documents are posted and can no longer be edited.', confirmText: 'Submit' })
+      if (!ok) return
+    }
   }
   clearTimeout(pt)
   busy.value = submit ? 'submit' : 'draft'

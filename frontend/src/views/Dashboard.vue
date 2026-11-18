@@ -32,7 +32,7 @@
           </Transition>
         </div>
         <router-link :to="`/${m.key}`" class="btn"><Icon name="ClipboardList" /> Open List</router-link>
-        <router-link v-if="!m.form?.noCreate" :to="`/${m.key}/new`" class="btn btn-emphasized"><Icon name="Plus" /> Create {{ m.short }}</router-link>
+        <router-link v-if="!m.form?.noCreate" :to="`/${m.key}/new`" class="btn btn-emphasized"><Icon name="Plus" /> Create {{ m.singular }}</router-link>
       </div>
       <!-- quick switch between dashboards -->
       <div class="switcher">
@@ -235,7 +235,7 @@ watch(() => props.module, load, { immediate: true })
 .rep-item:hover { background: var(--surface-hover); text-decoration: none; }
 @keyframes rep-in { from { opacity: 0; transform: translateX(-8px); } }
 .rep-ico { width: 2rem; height: 2rem; border-radius: 0.5rem; flex: none; display: grid; place-items: center; background: var(--brand-soft); color: var(--brand); }
-.rep-ico.lg { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; color: #fff; background: linear-gradient(135deg, var(--brand), #7858ff); }
+.rep-ico.lg { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .rep-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
 .rep-txt b { font-size: 0.875rem; }
 .rep-txt small { font-size: 0.75rem; }
@@ -260,7 +260,7 @@ watch(() => props.module, load, { immediate: true })
 .rel-card .go { color: var(--text-3); transition: transform 0.2s var(--ease), color 0.2s; }
 .rel-card:hover .go { transform: translateX(3px); color: var(--brand); }
 
-.hd-ico { width: 3rem; height: 3rem; border-radius: 0.875rem; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, #0070f2, #7858ff); box-shadow: 0 8px 18px -8px #0070f2; }
+.hd-ico { width: 3rem; height: 3rem; border-radius: 0.875rem; display: grid; place-items: center; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 8px 18px -8px var(--brand); }
 .switcher { display: flex; gap: 0.375rem; flex-wrap: wrap; margin-top: 1rem; }
 .chip { display: inline-flex; align-items: center; gap: 0.375rem; height: 1.875rem; padding: 0 0.75rem; border-radius: 1rem; background: var(--neutral-bg); color: var(--text-2); font-size: 0.8125rem; font-weight: 600; text-decoration: none; transition: all 0.2s var(--ease); }
 .chip:hover { background: var(--surface-hover); color: var(--text); text-decoration: none; transform: translateY(-1px); }

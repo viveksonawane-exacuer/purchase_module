@@ -252,7 +252,7 @@
         </span>
         <div class="spacer" />
         <button class="btn btn-ghost" @click="close">Close</button>
-        <router-link :to="replenishLink" class="btn btn-emphasized"><Icon name="FilePlus2" /> Create Requisition</router-link>
+        <router-link :to="replenishLink" class="btn btn-emphasized"><Icon name="FilePlus2" /> Create Material Request</router-link>
       </footer>
     </aside>
   </div>
@@ -438,7 +438,7 @@ onBeforeUnmount(() => {
 .sd-pager { display: flex; align-items: center; gap: 0.125rem; margin-right: 0.25rem; }
 .sd-pager .muted { font-size: 0.75rem; margin-right: 0.25rem; font-variant-numeric: tabular-nums; }
 .sd-title { display: flex; gap: 0.875rem; align-items: center; margin: 0.75rem 0 1rem; }
-.sd-avatar { width: 3.25rem; height: 3.25rem; border-radius: 0.875rem; flex: none; display: grid; place-items: center; overflow: hidden; color: #fff; background: linear-gradient(135deg, var(--brand), #7858ff); box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--brand) 60%, transparent); }
+.sd-avatar { width: 3.25rem; height: 3.25rem; border-radius: 0.875rem; flex: none; display: grid; place-items: center; overflow: hidden; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--brand) 60%, transparent); }
 .sd-avatar.img { background: var(--surface-2); }
 .sd-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .sd-avatar.zoomable { position: relative; padding: 0; border: 1px solid var(--border-soft); cursor: pointer; overflow: hidden; transition: transform 0.2s var(--spring), box-shadow 0.2s; }
@@ -547,7 +547,7 @@ i.out { background: var(--critical); }
 .mv-qty { display: flex; flex-direction: column; align-items: flex-end; font-variant-numeric: tabular-nums; }
 .mv-qty b { font-size: 1rem; }
 
-.sup-av { width: 1.75rem; height: 1.75rem; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 0.6875rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #0070f2, #00a99d); }
+.sup-av { width: 1.75rem; height: 1.75rem; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 0.6875rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
 .ell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .action-bar.in-panel { flex: none; }

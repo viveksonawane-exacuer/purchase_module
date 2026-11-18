@@ -7,7 +7,6 @@
         <div>
           <h1 class="page-title">Reorder &amp; Replenishment</h1>
           <div class="muted row wrap" style="gap: 0.5rem; font-size: 0.8125rem">
-            <span class="dt-chip" title="Reorder rules are set per warehouse on the Item (Item Reorder)"><Icon name="Layers" :size="12" /> Item Reorder</span>
             <span>Items whose projected quantity is below the reorder level</span>
           </div>
         </div>
@@ -29,7 +28,7 @@
       <div class="filterbar">
         <div class="field search-field">
           <label>Item</label>
-          <div class="search-box"><Icon name="Search" :size="15" /><input v-model="q" class="input" placeholder="Item code or name…" /></div>
+          <div class="search-box"><Icon name="Search" :size="15" /><input v-model="q" class="input" placeholder="Search item, warehouse, supplier, qty…" /></div>
         </div>
         <div class="field"><label>Warehouse</label><LinkInput v-model="warehouse" doctype="Warehouse" :filters="{ company: state.boot?.company, is_group: 0 }" /></div>
         <div class="field"><label>Urgency</label><SelectInput v-model="urgency" :options="['', 'Out of stock', 'Below reorder']" placeholder="All" /></div>
@@ -127,6 +126,7 @@
 </template>
 
 <script setup>
+import { rowMatches } from '../search'
 import { computed, onMounted, provide, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api'
@@ -152,7 +152,7 @@ const shown = computed(() => {
   const s = q.value.trim().toLowerCase()
   return (rows.value || []).filter(
     (r) =>
-      (!s || `${r.item_code} ${r.item_name}`.toLowerCase().includes(s)) &&
+      rowMatches(r, s) &&
       (!warehouse.value || r.warehouse === warehouse.value) &&
       (!urgency.value || (urgency.value === 'Out of stock') === (r.urgency === 'critical')) &&
       !(hideRequested.value && (r.ordered_qty > 0 || r.indented_qty > 0)),

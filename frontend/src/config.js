@@ -7,15 +7,15 @@ export const MODULES = {
   pr: {
     key: 'pr',
     doctype: 'Material Request',
-    title: 'Purchase Requisitions',
-    singular: 'Purchase Requisition',
+    title: 'Material Requests',
+    singular: 'Material Request',
     short: 'PR',
     icon: 'ClipboardList',
     baseFilters: [['material_request_type', '=', 'Purchase']],
     titleField: 'name',
     subtitle: (d) => d.title || `${(d.items || []).length} item(s)`,
     columns: [
-      { field: 'name', label: 'Requisition', type: 'title' },
+      { field: 'name', label: 'Material Request', type: 'title' },
       { field: 'transaction_date', label: 'Requested On', type: 'date' },
       { field: 'schedule_date', label: 'Required By', type: 'date' },
       { field: 'set_warehouse', label: 'Warehouse' },
@@ -213,8 +213,8 @@ export const MODULES = {
     key: 'grn',
     doctype: 'Purchase Receipt',
     hasCurrency: true, // doctype has a `currency` field (money columns use it)
-    title: 'Goods Receipts',
-    singular: 'Goods Receipt',
+    title: 'Purchase Receipts',
+    singular: 'Purchase Receipt',
     short: 'GRN',
     icon: 'PackageCheck',
     partyField: 'supplier',
@@ -260,13 +260,13 @@ export const MODULES = {
     key: 'pi',
     doctype: 'Purchase Invoice',
     hasCurrency: true, // doctype has a `currency` field (money columns use it)
-    title: 'Supplier Invoices',
-    singular: 'Supplier Invoice',
+    title: 'Purchase Invoices',
+    singular: 'Purchase Invoice',
     short: 'INV',
     icon: 'Receipt',
     partyField: 'supplier',
     columns: [
-      { field: 'name', label: 'Invoice', type: 'title' },
+      { field: 'name', label: 'Purchase Invoice', type: 'title' },
       { field: 'supplier_name', label: 'Supplier' },
       { field: 'bill_no', label: 'Supplier Ref.' },
       { field: 'posting_date', label: 'Posting', type: 'date' },
@@ -311,13 +311,13 @@ export const MODULES = {
   payment: {
     key: 'payment',
     doctype: 'Payment Entry',
-    title: 'Supplier Payments',
-    singular: 'Payment',
+    title: 'Payment Entries',
+    singular: 'Payment Entry',
     short: 'PAY',
     icon: 'Banknote',
     baseFilters: [['party_type', '=', 'Supplier']],
     columns: [
-      { field: 'name', label: 'Payment', type: 'title' },
+      { field: 'name', label: 'Payment Entry', type: 'title' },
       { field: 'party_name', label: 'Supplier' },
       { field: 'posting_date', label: 'Date', type: 'date' },
       { field: 'mode_of_payment', label: 'Mode' },
@@ -441,6 +441,7 @@ export const MODULES = {
     noCompany: true,
     noItems: true,
     master: true,
+    searchFields: ['description', 'brand'],
     columns: [
       { field: 'name', label: 'Item Code', type: 'title' },
       { field: 'item_name', label: 'Item Name' },
@@ -566,10 +567,10 @@ export const SPACES = [
       {
         title: 'Source to Contract',
         tiles: [
-          { to: '/pr', title: 'Purchase Requisitions', sub: 'Pending approval & sourcing', icon: 'ClipboardList', kpi: 'pr_open', unit: 'open' },
+          { to: '/pr', title: 'Material Requests', sub: 'Pending approval & sourcing', icon: 'ClipboardList', kpi: 'pr_open', unit: 'open' },
           { to: '/rfq', title: 'Requests for Quotation', sub: 'Open sourcing events', icon: 'Send', kpi: 'rfq_open', unit: 'open' },
           { to: '/sq', title: 'Supplier Quotations', sub: 'Bids to evaluate', icon: 'FileBadge', kpi: 'sq_received', unit: 'bids' },
-          { to: '/pr/new', title: 'Create Requisition', sub: 'Request material', icon: 'FilePlus2', action: true },
+          { to: '/pr/new', title: 'Create Material Request', sub: 'Request material', icon: 'FilePlus2', action: true },
         ],
       },
       {
@@ -577,7 +578,7 @@ export const SPACES = [
         tiles: [
           { to: '/po?tab=1', title: 'Approve Purchase Orders', sub: 'Waiting for release', icon: 'BadgeCheck', kpi: 'po_to_approve', unit: 'to approve', tone: 'critical' },
           { to: '/po', title: 'Manage Purchase Orders', sub: 'This month', icon: 'ShoppingCart', kpi: 'po_value_month', money: true },
-          { to: '/po?tab=2', title: 'Post Goods Receipt', sub: 'Orders due for receipt', icon: 'PackageCheck', kpi: 'po_to_receive', unit: 'orders' },
+          { to: '/po?tab=2', title: 'Create Purchase Receipt', sub: 'Orders due for receipt', icon: 'PackageCheck', kpi: 'po_to_receive', unit: 'orders' },
           { to: '/po/new', title: 'Create Purchase Order', sub: 'Direct buy', icon: 'FilePlus2', action: true },
         ],
       },
@@ -593,7 +594,7 @@ export const SPACES = [
           { to: '/finance', title: 'Payables Overview', sub: 'Open liabilities', icon: 'Landmark', kpi: 'payables', money: true },
           { to: '/pi?tab=3', title: 'Overdue Invoices', sub: 'Past due date', icon: 'AlarmClock', kpi: 'pi_overdue', unit: 'invoices', tone: 'negative' },
           { to: '/po?tab=3', title: 'Orders to Invoice', sub: 'Received, not billed', icon: 'Receipt', kpi: 'po_to_bill', unit: 'orders' },
-          { to: '/payment', title: 'Supplier Payments', sub: 'Outgoing payments', icon: 'Banknote' },
+          { to: '/payment', title: 'Payment Entries', sub: 'Outgoing payments', icon: 'Banknote' },
         ],
       },
     ],
@@ -607,7 +608,7 @@ export const SPACES = [
         tiles: [
           { to: '/inventory', title: 'Stock Overview', sub: 'By item & warehouse', icon: 'Warehouse' },
           { to: '/reorder', title: 'Below Reorder Level', sub: 'Needs replenishment', icon: 'TriangleAlert', kpi: 'low_stock', unit: 'items', tone: 'critical' },
-          { to: '/grn', title: 'Goods Receipts', sub: 'Inbound postings', icon: 'Truck' },
+          { to: '/grn', title: 'Purchase Receipts', sub: 'Inbound postings', icon: 'Truck' },
         ],
       },
     ],
@@ -620,13 +621,13 @@ export const SPACES = [
         title: 'Document Dashboards',
         tiles: [
           { to: '/insights', title: 'Analytics Overview', sub: 'All dashboards', icon: 'TrendingUp' },
-          { to: '/insights/pr', title: 'Requisition Analytics', sub: 'Demand & conversion', icon: 'ClipboardList' },
-          { to: '/insights/rfq', title: 'RFQ Analytics', sub: 'Response rates', icon: 'Send' },
-          { to: '/insights/sq', title: 'Quotation Analytics', sub: 'Bids & win rate', icon: 'FileBadge' },
+          { to: '/insights/pr', title: 'Material Request Analytics', sub: 'Demand & conversion', icon: 'ClipboardList' },
+          { to: '/insights/rfq', title: 'Request for Quotation Analytics', sub: 'Response rates', icon: 'Send' },
+          { to: '/insights/sq', title: 'Supplier Quotation Analytics', sub: 'Bids & win rate', icon: 'FileBadge' },
           { to: '/insights/po', title: 'Purchase Order Analytics', sub: 'Spend & delivery', icon: 'ShoppingCart' },
-          { to: '/insights/grn', title: 'Goods Receipt Analytics', sub: 'Inbound & quality', icon: 'PackageCheck' },
-          { to: '/insights/pi', title: 'Invoice Analytics', sub: 'Billing & overdue', icon: 'Receipt' },
-          { to: '/insights/payment', title: 'Payment Analytics', sub: 'Outflow by mode', icon: 'Banknote' },
+          { to: '/insights/grn', title: 'Purchase Receipt Analytics', sub: 'Inbound & quality', icon: 'PackageCheck' },
+          { to: '/insights/pi', title: 'Purchase Invoice Analytics', sub: 'Billing & overdue', icon: 'Receipt' },
+          { to: '/insights/payment', title: 'Payment Entry Analytics', sub: 'Outflow by mode', icon: 'Banknote' },
         ],
       },
     ],
@@ -636,13 +637,13 @@ export const SPACES = [
 // Sidebar: plain links and collapsible groups (children)
 // Standard procure-to-pay sequence (also drives the flow ribbon on forms)
 export const P2P = [
-  { doctype: 'Material Request', label: 'Requisition', to: '/pr' },
-  { doctype: 'Request for Quotation', label: 'RFQ', to: '/rfq' },
-  { doctype: 'Supplier Quotation', label: 'Quotation', to: '/sq' },
+  { doctype: 'Material Request', label: 'Material Request', to: '/pr' },
+  { doctype: 'Request for Quotation', label: 'Request for Quotation', to: '/rfq' },
+  { doctype: 'Supplier Quotation', label: 'Supplier Quotation', to: '/sq' },
   { doctype: 'Purchase Order', label: 'Purchase Order', to: '/po' },
-  { doctype: 'Purchase Receipt', label: 'Goods Receipt', to: '/grn' },
-  { doctype: 'Purchase Invoice', label: 'Invoice', to: '/pi' },
-  { doctype: 'Payment Entry', label: 'Payment', to: '/payment' },
+  { doctype: 'Purchase Receipt', label: 'Purchase Receipt', to: '/grn' },
+  { doctype: 'Purchase Invoice', label: 'Purchase Invoice', to: '/pi' },
+  { doctype: 'Payment Entry', label: 'Payment Entry', to: '/payment' },
 ]
 
 // Standard ERPNext reports available in the portal (filters come from reports.generated.json)
@@ -711,13 +712,13 @@ export const NAV = [
     group: 'dash', label: 'Dashboards', icon: 'TrendingUp',
     children: [
       { to: '/insights', label: 'Overview', icon: 'LayoutGrid', exact: true },
-      { to: '/insights/pr', label: 'Requisitions', icon: 'ClipboardList' },
-      { to: '/insights/rfq', label: 'RFQs', icon: 'Send' },
-      { to: '/insights/sq', label: 'Quotations', icon: 'FileBadge' },
+      { to: '/insights/pr', label: 'Material Requests', icon: 'ClipboardList' },
+      { to: '/insights/rfq', label: 'Requests for Quotation', icon: 'Send' },
+      { to: '/insights/sq', label: 'Supplier Quotations', icon: 'FileBadge' },
       { to: '/insights/po', label: 'Purchase Orders', icon: 'ShoppingCart' },
-      { to: '/insights/grn', label: 'Goods Receipts', icon: 'PackageCheck' },
-      { to: '/insights/pi', label: 'Invoices', icon: 'Receipt' },
-      { to: '/insights/payment', label: 'Payments', icon: 'Banknote' },
+      { to: '/insights/grn', label: 'Purchase Receipts', icon: 'PackageCheck' },
+      { to: '/insights/pi', label: 'Purchase Invoices', icon: 'Receipt' },
+      { to: '/insights/payment', label: 'Payment Entries', icon: 'Banknote' },
     ],
   },
   {

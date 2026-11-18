@@ -13,18 +13,26 @@
     <div v-if="state.dialog" class="overlay" @click.self="close(null)" @keydown.esc="close(null)">
       <div class="dialog fade-up" role="dialog" aria-modal="true">
         <header :class="state.dialog.type">
-          <Icon :name="state.dialog.type === 'negative' ? 'TriangleAlert' : 'Info'" />
+          <Icon :name="['negative', 'critical'].includes(state.dialog.type) ? 'TriangleAlert' : 'Info'" />
           <h3>{{ state.dialog.title }}</h3>
         </header>
         <div class="dialog-body">
           <p style="margin: 0 0 0.75rem; white-space: pre-line">{{ state.dialog.message }}</p>
+          <ul v-if="state.dialog.details?.length" class="dlg-details">
+            <li v-for="(d, i) in state.dialog.details" :key="i">{{ d }}</li>
+          </ul>
           <div v-if="state.dialog.input" class="field">
-            <label>{{ state.dialog.input }}</label>
-            <textarea ref="inp" v-model="state.dialog.value" class="input" />
+            <label :class="{ req: state.dialog.inputType === 'date' }">{{ state.dialog.input }}</label>
+            <input v-if="state.dialog.inputType === 'date'" ref="inp" v-model="state.dialog.value" type="date" class="input" :min="state.dialog.min || undefined" />
+            <textarea v-else ref="inp" v-model="state.dialog.value" class="input" />
           </div>
         </div>
         <footer>
-          <button class="btn" :class="'btn-' + (state.dialog.type === 'negative' ? 'negative' : 'emphasized')" @click="close(state.dialog.value || true)">
+          <button
+            class="btn" :class="'btn-' + (state.dialog.type === 'negative' ? 'negative' : 'emphasized')"
+            :disabled="state.dialog.inputType === 'date' && (!state.dialog.value || (state.dialog.min && state.dialog.value < state.dialog.min))"
+            @click="close(state.dialog.value || true)"
+          >
             {{ state.dialog.confirmText }}
           </button>
           <button class="btn btn-transparent" @click="close(null)">Cancel</button>
@@ -43,6 +51,8 @@ function close(v) {
 }
 </script>
 <style>
+.dlg-details { margin: 0 0 0.875rem; padding: 0.5rem 0.75rem 0.5rem 1.75rem; border-radius: 0.5rem; background: var(--critical-bg); color: var(--critical-text); font-size: 0.8125rem; max-height: 10rem; overflow: auto; }
+.dlg-details li + li { margin-top: 0.125rem; }
 .toasts {
   position: fixed;
   bottom: 5.5rem;
@@ -94,6 +104,7 @@ function close(v) {
   border-bottom: 3px solid var(--brand);
 }
 .dialog header.negative { border-color: var(--negative); color: var(--negative); }
+.dialog header.critical { border-color: var(--critical); color: var(--critical-text); }
 .dialog header h3 { font-size: 1rem; color: var(--text); }
 .dialog-body { padding: 1rem 1.25rem; }
 .dialog footer {

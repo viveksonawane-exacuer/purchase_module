@@ -7,7 +7,6 @@
           <div class="breadcrumbs"><router-link to="/">Home</router-link><Icon name="ChevronRight" :size="12" /> {{ m.title }}</div>
           <div class="row wrap" style="gap: 0.75rem">
             <h1 class="page-title">{{ m.title }}</h1>
-            <span class="dt-chip" title="DocType in ERPNext Desk"><Icon name="Layers" :size="12" /> {{ m.doctype }}</span>
             <div class="variant">
               <button class="btn btn-transparent btn-sm" @click="variantMenu = !variantMenu">
                 {{ currentVariant || 'Standard' }}<span v-if="dirty">*</span>
@@ -28,7 +27,7 @@
             <div class="spacer" />
             <router-link :to="`/insights/${m.key}`" class="btn btn-transparent" title="Analytics for this document type"><Icon name="TrendingUp" /> <span class="hide-sm">Dashboard</span></router-link>
             <router-link v-if="!m.form?.noCreate && can.create" :to="`/${m.key}/new`" class="btn btn-emphasized">
-              <Icon name="Plus" /> Create {{ m.short }}
+              <Icon name="Plus" /> Create {{ m.singular }}
             </router-link>
             <button class="btn btn-transparent btn-icon" :title="showFilters ? 'Hide filter bar' : 'Show filter bar'" @click="showFilters = !showFilters">
               <Icon name="SlidersHorizontal" />
@@ -41,7 +40,7 @@
               <label>Search</label>
               <div class="search-box">
                 <Icon name="Search" :size="15" />
-                <input v-model="search" class="input" :placeholder="`${m.short} number…`" @keydown.enter="reload" />
+                <input v-model="search" class="input" :placeholder="`Search ${m.title.toLowerCase()}…`" :title="searchHint" @input="onSearchInput" @keydown.enter="onSearchEnter" />
               </div>
             </div>
             <div v-for="f in m.filters" :key="f.field" class="field">
@@ -139,6 +138,7 @@
 </template>
 
 <script setup>
+import { moduleOrFilters, moduleSearchHint } from '../search'
 import { computed, provide, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api'
@@ -200,9 +200,19 @@ function buildFilters(tabIndex = tab.value) {
     if (v === undefined || v === '' || v === null) continue
     f.push([def.field, def.op || '=', v])
   }
-  if (search.value.trim()) f.push(['name', 'like', `%${search.value.trim()}%`])
   return f
 }
+const buildOrFilters = () => moduleOrFilters(m.value, search.value)
+let searchTimer
+function onSearchInput() {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(reload, 350)
+}
+function onSearchEnter() {
+  clearTimeout(searchTimer)
+  reload()
+}
+const searchHint = computed(() => moduleSearchHint(m.value))
 const fields = computed(() => {
   const s = new Set(['name', 'docstatus', ...(m.value.noStatus ? [] : ['status']), 'modified', ...m.value.columns.map((c) => c.field)])
   if (m.value.noStatus) s.delete('status')
@@ -214,9 +224,10 @@ async function fetchRows(start = 0) {
   loading.value = true
   try {
     const filters = buildFilters()
+    const or_filters = buildOrFilters()
     const [data, count] = await Promise.all([
-      api.getList(m.value.doctype, { fields: fields.value, filters, order_by: `${sort.field} ${sort.dir}`, start, limit: PAGE }),
-      start ? Promise.resolve(total.value) : api.getCount(m.value.doctype, filters),
+      api.getList(m.value.doctype, { fields: fields.value, filters, or_filters, order_by: `${sort.field} ${sort.dir}`, start, limit: PAGE }),
+      start ? Promise.resolve(total.value) : api.getCount(m.value.doctype, filters, or_filters),
     ])
     rows.value = start ? [...rows.value, ...data] : data
     total.value = count
@@ -228,7 +239,7 @@ async function fetchCounts() {
   const out = {}
   await Promise.all(
     m.value.quickTabs.map(async (_, i) => {
-      out[i] = await api.getCount(m.value.doctype, buildFilters(i)).catch(() => undefined)
+      out[i] = await api.getCount(m.value.doctype, buildFilters(i), buildOrFilters()).catch(() => undefined)
     }),
   )
   counts.value = out

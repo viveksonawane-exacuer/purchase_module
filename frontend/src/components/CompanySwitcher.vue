@@ -57,6 +57,7 @@
 </template>
 
 <script setup>
+import { rowMatches } from '../search'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { api } from '../api'
@@ -77,7 +78,7 @@ const companies = computed(() => state.boot.companies || [])
 const list = computed(() => {
   const s = q.value.trim().toLowerCase()
   const all = companies.value
-  return s ? all.filter((c) => `${c.name} ${c.abbr}`.toLowerCase().includes(s)) : all
+  return s ? all.filter((c) => rowMatches(c, s)) : all
 })
 watch(q, () => (sel.value = 0))
 

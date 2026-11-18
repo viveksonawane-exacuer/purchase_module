@@ -67,7 +67,7 @@
             </tr>
           </tbody>
         </table>
-        <div v-if="data && !data.payments.length" class="empty"><Icon name="Banknote" /><div>No supplier payments yet.</div></div>
+        <div v-if="data && !data.payments.length" class="empty"><Icon name="Banknote" /><div>No payment entries yet.</div></div>
       </div>
     </div>
   </div>
@@ -86,7 +86,7 @@ const router = useRouter()
 const data = ref(null)
 const tab = ref('inv')
 async function pay(i) {
-  const ok = await confirmBox({ title: 'Post Payment', message: `Create a draft payment of ${fmtMoney(i.outstanding_amount, i.currency)} to ${i.supplier_name} against ${i.name}?`, confirmText: 'Create Payment' })
+  const ok = await confirmBox({ title: 'Create Payment Entry', message: `Create a draft payment entry of ${fmtMoney(i.outstanding_amount, i.currency)} to ${i.supplier_name} against ${i.name}?`, confirmText: 'Create Payment Entry' })
   if (!ok) return
   const r = await api.runAction('Purchase Invoice', i.name, 'make_payment')
   toast(r.message)

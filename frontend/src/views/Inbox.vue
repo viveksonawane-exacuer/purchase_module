@@ -48,11 +48,11 @@ const shown = computed(() => tasks.value.filter((t) => filter.value === 'all' ||
 
 const SOURCES = [
   { module: 'po', kind: 'approve', title: 'Approve Purchase Order', filters: [['docstatus', '=', 0]], icon: 'BadgeCheck', tone: 'critical', sub: (r) => r.supplier_name || '', fields: ['supplier_name'] },
-  { module: 'pr', kind: 'approve', title: 'Approve Requisition', filters: [['docstatus', '=', 0], ['material_request_type', '=', 'Purchase']], icon: 'ClipboardList', tone: 'critical', sub: (r) => r.set_warehouse || '', fields: ['set_warehouse'] },
-  { module: 'pr', kind: 'action', title: 'Source Requisition', filters: [['status', 'in', ['Pending', 'Partially Ordered']], ['material_request_type', '=', 'Purchase']], icon: 'Send', tone: 'info', sub: (r) => `Required by ${r.schedule_date || '—'}`, fields: ['schedule_date'] },
-  { module: 'sq', kind: 'action', title: 'Evaluate Quotation', filters: [['status', '=', 'Submitted']], icon: 'FileBadge', tone: 'info', sub: (r) => r.supplier_name || '', fields: ['supplier_name'] },
-  { module: 'pi', kind: 'approve', title: 'Verify Supplier Invoice', filters: [['docstatus', '=', 0]], icon: 'Receipt', tone: 'critical', sub: (r) => r.supplier_name || '', fields: ['supplier_name'] },
-  { module: 'payment', kind: 'approve', title: 'Release Payment', filters: [['docstatus', '=', 0], ['party_type', '=', 'Supplier']], icon: 'Banknote', tone: 'critical', sub: (r) => r.party_name || '', fields: ['party_name'] },
+  { module: 'pr', kind: 'approve', title: 'Approve Material Request', filters: [['docstatus', '=', 0], ['material_request_type', '=', 'Purchase']], icon: 'ClipboardList', tone: 'critical', sub: (r) => r.set_warehouse || '', fields: ['set_warehouse'] },
+  { module: 'pr', kind: 'action', title: 'Source Material Request', filters: [['status', 'in', ['Pending', 'Partially Ordered']], ['material_request_type', '=', 'Purchase']], icon: 'Send', tone: 'info', sub: (r) => `Required by ${r.schedule_date || '—'}`, fields: ['schedule_date'] },
+  { module: 'sq', kind: 'action', title: 'Evaluate Supplier Quotation', filters: [['status', '=', 'Submitted']], icon: 'FileBadge', tone: 'info', sub: (r) => r.supplier_name || '', fields: ['supplier_name'] },
+  { module: 'pi', kind: 'approve', title: 'Verify Purchase Invoice', filters: [['docstatus', '=', 0]], icon: 'Receipt', tone: 'critical', sub: (r) => r.supplier_name || '', fields: ['supplier_name'] },
+  { module: 'payment', kind: 'approve', title: 'Release Payment Entry', filters: [['docstatus', '=', 0], ['party_type', '=', 'Supplier']], icon: 'Banknote', tone: 'critical', sub: (r) => r.party_name || '', fields: ['party_name'] },
 ]
 
 async function load() {

@@ -10,7 +10,7 @@
       </div>
       <div class="spacer" />
       <div class="row wrap hero-actions">
-        <router-link to="/pr/new" class="btn btn-emphasized"><Icon name="Plus" /> New Requisition</router-link>
+        <router-link to="/pr/new" class="btn btn-emphasized"><Icon name="Plus" /> New Material Request</router-link>
         <router-link to="/rfq/new" class="btn"><Icon name="Send" /> New RFQ</router-link>
         <router-link to="/po/new" class="btn"><Icon name="ShoppingCart" /> New PO</router-link>
       </div>
@@ -124,9 +124,9 @@ const spendData = computed(() =>
 const totalSpend = computed(() => (data.value?.spend || []).reduce((a, b) => a + b.value, 0))
 const attention = computed(() => [
   { label: 'POs waiting for approval', value: tiles.value.po_to_approve, to: '/po?tab=1', icon: 'BadgeCheck', tone: 'critical' },
-  { label: 'Overdue supplier invoices', value: tiles.value.pi_overdue, to: '/pi?tab=3', icon: 'AlarmClock', tone: 'negative' },
+  { label: 'Overdue purchase invoices', value: tiles.value.pi_overdue, to: '/pi?tab=3', icon: 'AlarmClock', tone: 'negative' },
   { label: 'Items below reorder level', value: tiles.value.low_stock, to: '/reorder', icon: 'TriangleAlert', tone: 'critical' },
-  { label: 'Draft requisitions', value: tiles.value.pr_draft, to: '/pr?tab=1', icon: 'ClipboardList', tone: 'info' },
+  { label: 'Draft material requests', value: tiles.value.pr_draft, to: '/pr?tab=1', icon: 'ClipboardList', tone: 'info' },
 ])
 onMounted(async () => {
   data.value = await api.dashboard()

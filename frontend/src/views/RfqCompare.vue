@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+import { askPoRequiredBy, confirmSubmitWithDates } from '../requiredBy'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api'
@@ -109,6 +110,7 @@ async function load() {
   data.value = await api.rfqComparison(rfq.value)
 }
 async function submitQuote(q) {
+  if ((await confirmSubmitWithDates('Supplier Quotation', q.name, q.name)) === false) return
   await api.runAction('Supplier Quotation', q.name, 'submit')
   toast(`${q.name} submitted`)
   load()
@@ -120,7 +122,9 @@ async function award(q) {
     confirmText: 'Award & Create PO',
   })
   if (!ok) return
-  const r = await api.runAction('Supplier Quotation', q.name, 'make_po')
+  const d = await askPoRequiredBy('Supplier Quotation', q.name)
+  if (!d) return
+  const r = await api.runAction('Supplier Quotation', q.name, 'make_po', d)
   toast(r.message)
   router.push(`/po/${encodeURIComponent(r.name)}/edit`)
 }
