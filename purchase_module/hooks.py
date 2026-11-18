@@ -70,9 +70,8 @@ app_license = "mit"
 # home_page = "login"
 
 # website user home page (by Role)
-# role_home_page = {
-# 	"Role": "home_page"
-# }
+# vendors land on their portal right after login
+role_home_page = {"Vendor User": "procure/vendor"}
 
 # Generators
 # ----------
@@ -96,7 +95,8 @@ app_license = "mit"
 # ------------
 
 # before_install = "purchase_module.install.before_install"
-# after_install = "purchase_module.install.after_install"
+after_install = "purchase_module.install.after_install"
+after_migrate = "purchase_module.install.after_migrate"
 
 # Uninstallation
 # ------------
@@ -272,3 +272,20 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+
+# Procurement Hub (Fiori-style SPA served at /procure)
+website_route_rules = [
+	{"from_route": "/procure/<path:app_path>", "to_route": "procure"},
+]
+
+# Icon on the Desk apps screen (/desk) that opens the portal
+add_to_apps_screen = [
+	{
+		"name": "purchase_module",
+		"logo": "/assets/purchase_module/images/procure-logo.svg",
+		"title": "Procurement Hub",
+		"route": "/procure",
+		"has_permission": "purchase_module.api.check_app_permission",
+		"sequence_id": 5,
+	}
+]

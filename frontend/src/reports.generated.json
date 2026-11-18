@@ -1,0 +1,1283 @@
+{
+ "Purchase Order Analysis": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "Project"
+  },
+  {
+   "fieldname": "name",
+   "label": "Purchase Order",
+   "fieldtype": "MultiSelectList",
+   "options": "Purchase Order",
+   "dynamic": true
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "MultiSelectList",
+   "options": "To Pay\nTo Bill\nTo Receive\nTo Receive and Bill\nCompleted\nClosed",
+   "dynamic": true
+  },
+  {
+   "fieldname": "group_by_po",
+   "label": "Group by Purchase Order",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Purchase Analytics": [
+  {
+   "fieldname": "tree_type",
+   "label": "Tree Type",
+   "fieldtype": "Select",
+   "options": "Supplier Group\nSupplier\nItem Group\nItem",
+   "default": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "entity",
+   "label": "Entity",
+   "fieldtype": "MultiSelectList",
+   "depends_on": "eval:doc.tree_type != 'Order Type'",
+   "dynamic": true
+  },
+  {
+   "fieldname": "doc_type",
+   "label": "based_on",
+   "fieldtype": "Select",
+   "options": "Purchase Order\nPurchase Receipt\nPurchase Invoice",
+   "default": "Purchase Invoice",
+   "reqd": 1
+  },
+  {
+   "fieldname": "value_quantity",
+   "label": "Value Or Qty",
+   "fieldtype": "Select",
+   "options": "[object Object]\n[object Object]",
+   "default": "Value",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "range",
+   "label": "Range",
+   "fieldtype": "Select",
+   "options": "[object Object]\n[object Object]\n[object Object]\n[object Object]",
+   "default": "Monthly",
+   "reqd": 1
+  },
+  {
+   "fieldname": "curves",
+   "label": "Curves",
+   "fieldtype": "Select",
+   "options": "[object Object]\n[object Object]\n[object Object]\n[object Object]",
+   "default": "select",
+   "reqd": 1
+  },
+  {
+   "fieldname": "show_aggregate_value_from_subsidiary_companies",
+   "label": "Show Aggregate Value from Subsidiary Companies",
+   "fieldtype": "Check"
+  }
+ ],
+ "Item-wise Purchase History": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "supplier",
+   "label": "Supplier",
+   "fieldtype": "Link",
+   "options": "Supplier"
+  }
+ ],
+ "Procurement Tracker": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "Link",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "Project"
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date"
+  }
+ ],
+ "Requested Items to Order and Receive": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "material_request",
+   "label": "Material Request",
+   "fieldtype": "Link",
+   "options": "Material Request",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "group_by_mr",
+   "label": "Group by Material Request",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Supplier Quotation Comparison": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "supplier",
+   "label": "Supplier",
+   "fieldtype": "MultiSelectList",
+   "options": "Supplier",
+   "dynamic": true
+  },
+  {
+   "fieldname": "supplier_quotation",
+   "label": "Supplier Quotation",
+   "fieldtype": "MultiSelectList",
+   "options": "Supplier Quotation",
+   "dynamic": true
+  },
+  {
+   "fieldname": "request_for_quotation",
+   "label": "Request for Quotation",
+   "fieldtype": "Link",
+   "options": "Request for Quotation",
+   "dynamic": true
+  },
+  {
+   "fieldname": "categorize_by",
+   "label": "Categorize by",
+   "fieldtype": "Select",
+   "options": "[object Object]\n[object Object]",
+   "default": "Categorize by Supplier"
+  },
+  {
+   "fieldname": "status",
+   "label": "Status",
+   "fieldtype": "Select",
+   "options": "[object Object]\n[object Object]\n[object Object]",
+   "default": "Submitted"
+  },
+  {
+   "fieldname": "include_expired",
+   "label": "Include Expired",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Stock Balance": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:company"
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Items",
+   "fieldtype": "MultiSelectList",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouses",
+   "fieldtype": "MultiSelectList",
+   "options": "Warehouse",
+   "dynamic": true
+  },
+  {
+   "fieldname": "warehouse_type",
+   "label": "Warehouse Type",
+   "fieldtype": "Link",
+   "options": "Warehouse Type"
+  },
+  {
+   "fieldname": "valuation_field_type",
+   "label": "Valuation Field Type",
+   "fieldtype": "Select",
+   "options": "Currency\nFloat",
+   "default": "Currency"
+  },
+  {
+   "fieldname": "include_uom",
+   "label": "Include UOM",
+   "fieldtype": "Link",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "show_alt_uom_balance",
+   "label": "Show Alternate UOM Balance",
+   "fieldtype": "Check",
+   "default": 0
+  },
+  {
+   "fieldname": "show_variant_attributes",
+   "label": "Show Variant Attributes",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_stock_ageing_data",
+   "label": "Show Stock Ageing Data",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "ignore_closing_balance",
+   "label": "Ignore Closing Balance",
+   "fieldtype": "Check",
+   "default": 0
+  },
+  {
+   "fieldname": "include_zero_stock_items",
+   "label": "Include Zero Stock Items",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "show_dimension_wise_stock",
+   "label": "Show Dimension Wise Stock",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Stock Ledger": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouses",
+   "fieldtype": "MultiSelectList",
+   "options": "Warehouse",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Items",
+   "fieldtype": "MultiSelectList",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "batch_no",
+   "label": "Batch No",
+   "fieldtype": "Link",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "brand",
+   "label": "Brands",
+   "fieldtype": "MultiSelectList",
+   "options": "Brand",
+   "dynamic": true
+  },
+  {
+   "fieldname": "voucher_no",
+   "label": "Voucher #",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "Link",
+   "options": "Project"
+  },
+  {
+   "fieldname": "include_uom",
+   "label": "Include UOM",
+   "fieldtype": "Link",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "valuation_field_type",
+   "label": "Valuation Field Type",
+   "fieldtype": "Select",
+   "options": "Currency\nFloat",
+   "default": "Currency"
+  },
+  {
+   "fieldname": "segregate_serial_batch_bundle",
+   "label": "Enable Serial / Batch Bundle",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Stock Projected Qty": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouse",
+   "fieldtype": "Link",
+   "options": "Warehouse",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "brand",
+   "label": "Brand",
+   "fieldtype": "Link",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "include_uom",
+   "label": "Include UOM",
+   "fieldtype": "Link",
+   "options": "UOM"
+  }
+ ],
+ "Stock Ageing": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "As On Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse_type",
+   "label": "Warehouse Type",
+   "fieldtype": "Link",
+   "options": "Warehouse Type"
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouse",
+   "fieldtype": "Link",
+   "options": "Warehouse",
+   "dynamic": true
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item"
+  },
+  {
+   "fieldname": "brand",
+   "label": "Brand",
+   "fieldtype": "Link",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "range",
+   "label": "Ageing Range",
+   "fieldtype": "Data",
+   "default": "30, 60, 90"
+  },
+  {
+   "fieldname": "show_warehouse_wise_stock",
+   "label": "Show Warehouse-wise Stock",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Item Shortage Report": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouse",
+   "fieldtype": "MultiSelectList",
+   "options": "Warehouse",
+   "dynamic": true
+  }
+ ],
+ "Warehouse Wise Stock Balance": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "show_disabled_warehouses",
+   "label": "Show Disabled Warehouses",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Accounts Payable": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "report_date",
+   "label": "Report Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:"
+  },
+  {
+   "fieldname": "finance_book",
+   "label": "Finance Book",
+   "fieldtype": "Link",
+   "options": "Finance Book"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "MultiSelectList",
+   "options": "Cost Center",
+   "dynamic": true
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "MultiSelectList",
+   "options": "Project",
+   "dynamic": true
+  },
+  {
+   "fieldname": "party_account",
+   "label": "Payable Account",
+   "fieldtype": "Link",
+   "options": "Account",
+   "dynamic": true
+  },
+  {
+   "fieldname": "ageing_based_on",
+   "label": "Ageing Based On",
+   "fieldtype": "Select",
+   "options": "Posting Date\nDue Date\nSupplier Invoice Date",
+   "default": "Due Date"
+  },
+  {
+   "fieldname": "age_as_on",
+   "label": "Age as on",
+   "fieldtype": "Select",
+   "options": "Report Date\nToday",
+   "default": "Report Date"
+  },
+  {
+   "fieldname": "range",
+   "label": "Ageing Range",
+   "fieldtype": "Data",
+   "default": "30, 60, 90, 120"
+  },
+  {
+   "fieldname": "payment_terms_template",
+   "label": "Payment Terms Template",
+   "fieldtype": "Link",
+   "options": "Payment Terms Template"
+  },
+  {
+   "fieldname": "party_type",
+   "label": "Party Type",
+   "fieldtype": "Autocomplete"
+  },
+  {
+   "fieldname": "party",
+   "label": "Party",
+   "fieldtype": "MultiSelectList",
+   "options": "party_type",
+   "dynamic": true
+  },
+  {
+   "fieldname": "supplier_group",
+   "label": "Supplier Group",
+   "fieldtype": "MultiSelectList",
+   "options": "Supplier Group",
+   "dynamic": true
+  },
+  {
+   "fieldname": "group_by_party",
+   "label": "Group By Supplier",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "based_on_payment_terms",
+   "label": "Based On Payment Terms",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_remarks",
+   "label": "Show Remarks",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_future_payments",
+   "label": "Show Future Payments",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "in_party_currency",
+   "label": "In Party Currency",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "for_revaluation_journals",
+   "label": "Include Revaluation Journals",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "ignore_accounts",
+   "label": "Group by Voucher",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "handle_employee_advances",
+   "label": "Handle Employee Advances",
+   "fieldtype": "Check"
+  }
+ ],
+ "Accounts Payable Summary": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "report_date",
+   "label": "Report Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:"
+  },
+  {
+   "fieldname": "ageing_based_on",
+   "label": "Ageing Based On",
+   "fieldtype": "Select",
+   "options": "Posting Date\nDue Date",
+   "default": "Due Date"
+  },
+  {
+   "fieldname": "age_as_on",
+   "label": "Age as on",
+   "fieldtype": "Select",
+   "options": "Report Date\nToday",
+   "default": "Report Date"
+  },
+  {
+   "fieldname": "range",
+   "label": "Ageing Range",
+   "fieldtype": "Data",
+   "default": "30, 60, 90, 120"
+  },
+  {
+   "fieldname": "finance_book",
+   "label": "Finance Book",
+   "fieldtype": "Link",
+   "options": "Finance Book"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "MultiSelectList",
+   "options": "Cost Center",
+   "dynamic": true
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "MultiSelectList",
+   "options": "Project",
+   "dynamic": true
+  },
+  {
+   "fieldname": "party_type",
+   "label": "Party Type",
+   "fieldtype": "Autocomplete"
+  },
+  {
+   "fieldname": "party",
+   "label": "Party",
+   "fieldtype": "MultiSelectList",
+   "options": "party_type",
+   "dynamic": true
+  },
+  {
+   "fieldname": "payment_terms_template",
+   "label": "Payment Terms Template",
+   "fieldtype": "Link",
+   "options": "Payment Terms Template"
+  },
+  {
+   "fieldname": "supplier_group",
+   "label": "Supplier Group",
+   "fieldtype": "MultiSelectList",
+   "options": "Supplier Group",
+   "dynamic": true
+  },
+  {
+   "fieldname": "based_on_payment_terms",
+   "label": "Based On Payment Terms",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "for_revaluation_journals",
+   "label": "Include Revaluation Journals",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_gl_balance",
+   "label": "Show GL Balance",
+   "fieldtype": "Check"
+  }
+ ],
+ "General Ledger": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finance_book",
+   "label": "Finance Book",
+   "fieldtype": "Link",
+   "options": "Finance Book"
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "account",
+   "label": "Account",
+   "fieldtype": "MultiSelectList",
+   "options": "Account",
+   "dynamic": true
+  },
+  {
+   "fieldname": "voucher_no",
+   "label": "Voucher No",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "against_voucher_no",
+   "label": "Against Voucher No",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "party_type",
+   "label": "Party Type",
+   "fieldtype": "Autocomplete"
+  },
+  {
+   "fieldname": "party",
+   "label": "Party",
+   "fieldtype": "MultiSelectList",
+   "options": "party_type",
+   "depends_on": "party_type",
+   "dynamic": true
+  },
+  {
+   "fieldname": "party_name",
+   "label": "Party Name",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "categorize_by",
+   "label": "Categorize by",
+   "fieldtype": "Select",
+   "options": "\n[object Object]\n[object Object]\n[object Object]\n[object Object]",
+   "default": "Categorize by Voucher (Consolidated)"
+  },
+  {
+   "fieldname": "tax_id",
+   "label": "Tax Id",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "presentation_currency",
+   "label": "Currency",
+   "fieldtype": "Select"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "MultiSelectList",
+   "options": "Cost Center",
+   "dynamic": true
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "MultiSelectList",
+   "options": "Project",
+   "dynamic": true
+  },
+  {
+   "fieldname": "include_dimensions",
+   "label": "Consider Accounting Dimensions",
+   "fieldtype": "Check",
+   "default": 0
+  },
+  {
+   "fieldname": "disable_opening_balance_calculation",
+   "label": "Disable Opening Balance Calculation",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_opening_entries",
+   "label": "Show Opening Entries",
+   "fieldtype": "Check",
+   "depends_on": "eval: !doc.disable_opening_balance_calculation"
+  },
+  {
+   "fieldname": "include_default_book_entries",
+   "label": "Include Default FB Entries",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "show_cancelled_entries",
+   "label": "Show Cancelled Entries",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_net_values_in_party_account",
+   "label": "Show Net Values in Party Account",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_amount_in_company_currency",
+   "label": "Show Credit / Debit in Company Currency",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "add_values_in_transaction_currency",
+   "label": "Add Columns in Transaction Currency",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_remarks",
+   "label": "Show Remarks",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "ignore_err",
+   "label": "Ignore Exchange Rate Revaluation and Gain / Loss Journals",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "ignore_cr_dr_notes",
+   "label": "Ignore System Generated Credit / Debit Notes",
+   "fieldtype": "Check"
+  }
+ ],
+ "Purchase Register": [
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1"
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:"
+  },
+  {
+   "fieldname": "supplier",
+   "label": "Supplier",
+   "fieldtype": "Link",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "supplier_group",
+   "label": "Supplier Group",
+   "fieldtype": "Link",
+   "options": "Supplier Group"
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "mode_of_payment",
+   "label": "Mode of Payment",
+   "fieldtype": "Link",
+   "options": "Mode of Payment"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "Link",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "warehouse",
+   "label": "Warehouse",
+   "fieldtype": "Link",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "include_payments",
+   "label": "Show Ledger View",
+   "fieldtype": "Check",
+   "default": 0
+  }
+ ],
+ "Item-wise Purchase Register": [
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "label": "Item",
+   "fieldtype": "Link",
+   "options": "Item"
+  },
+  {
+   "fieldname": "item_group",
+   "label": "Item Group",
+   "fieldtype": "Link",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "supplier",
+   "label": "Supplier",
+   "fieldtype": "Link",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "mode_of_payment",
+   "label": "Mode of Payment",
+   "fieldtype": "Link",
+   "options": "Mode of Payment"
+  },
+  {
+   "fieldname": "group_by",
+   "label": "Group By",
+   "fieldtype": "Select",
+   "options": "\nSupplier\nItem Group\nItem\nInvoice"
+  }
+ ],
+ "Supplier Ledger Summary": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company"
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:add_months:__DATE__:get_today:,-1",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date",
+   "default": "__DATE__:get_today:",
+   "reqd": 1
+  },
+  {
+   "fieldname": "finance_book",
+   "label": "Finance Book",
+   "fieldtype": "Link",
+   "options": "Finance Book"
+  },
+  {
+   "fieldname": "party",
+   "label": "Supplier",
+   "fieldtype": "Link",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "supplier_group",
+   "label": "Supplier Group",
+   "fieldtype": "Link",
+   "options": "Supplier Group"
+  },
+  {
+   "fieldname": "payment_terms_template",
+   "label": "Payment Terms Template",
+   "fieldtype": "Link",
+   "options": "Payment Terms Template"
+  },
+  {
+   "fieldname": "tax_id",
+   "label": "Tax Id",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "supplier_name",
+   "label": "Supplier Name",
+   "fieldtype": "Data"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "MultiSelectList",
+   "options": "Cost Center",
+   "dynamic": true
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "MultiSelectList",
+   "options": "Project",
+   "dynamic": true
+  }
+ ],
+ "Trial Balance": [
+  {
+   "fieldname": "company",
+   "label": "Company",
+   "fieldtype": "Link",
+   "options": "Company",
+   "default": "__DEFAULT__:Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fiscal_year",
+   "label": "Fiscal Year",
+   "fieldtype": "Link",
+   "options": "Fiscal Year",
+   "reqd": 1
+  },
+  {
+   "fieldname": "from_date",
+   "label": "From Date",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "to_date",
+   "label": "To Date",
+   "fieldtype": "Date"
+  },
+  {
+   "fieldname": "cost_center",
+   "label": "Cost Center",
+   "fieldtype": "MultiSelectList",
+   "options": "Cost Center",
+   "dynamic": true
+  },
+  {
+   "fieldname": "project",
+   "label": "Project",
+   "fieldtype": "MultiSelectList",
+   "options": "Project",
+   "dynamic": true
+  },
+  {
+   "fieldname": "finance_book",
+   "label": "Finance Book",
+   "fieldtype": "Link",
+   "options": "Finance Book"
+  },
+  {
+   "fieldname": "presentation_currency",
+   "label": "Currency",
+   "fieldtype": "Select"
+  },
+  {
+   "fieldname": "with_period_closing_entry_for_opening",
+   "label": "With Period Closing Entry For Opening Balances",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "with_period_closing_entry_for_current_period",
+   "label": "Period Closing Entry For Current Period",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "show_zero_values",
+   "label": "Show zero values",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "show_unclosed_fy_pl_balances",
+   "label": "Show unclosed fiscal year's P&L balances",
+   "fieldtype": "Check"
+  },
+  {
+   "fieldname": "include_default_book_entries",
+   "label": "Include Default FB Entries",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "show_net_values",
+   "label": "Show net values in opening and closing columns",
+   "fieldtype": "Check",
+   "default": 1
+  },
+  {
+   "fieldname": "show_group_accounts",
+   "label": "Show Group Accounts",
+   "fieldtype": "Check",
+   "default": 1
+  }
+ ]
+}
