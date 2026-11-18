@@ -21,6 +21,13 @@ const routes = [
   { path: '/', component: () => import('./views/Launchpad.vue') },
   { path: '/inbox', component: () => import('./views/Inbox.vue') },
   { path: '/finance', component: () => import('./views/Finance.vue') },
+  { path: '/accounts', redirect: '/accounts/chart-of-accounts' },
+  { path: '/accounts/chart-of-accounts', component: () => import('./views/accounts/ChartOfAccounts.vue') },
+  { path: '/accounts/general-ledger', component: () => import('./views/accounts/GeneralLedger.vue') },
+  { path: '/accounts/trial-balance', component: () => import('./views/accounts/TrialBalance.vue') },
+  { path: '/accounts/balance-sheet', component: () => import('./views/accounts/BalanceSheet.vue') },
+  { path: '/accounts/profit-loss', component: () => import('./views/accounts/ProfitLoss.vue') },
+  { path: '/accounts/cash-flow', component: () => import('./views/accounts/CashFlow.vue') },
   {
     path: '/inventory',
     component: () => import('./views/Inventory.vue'),

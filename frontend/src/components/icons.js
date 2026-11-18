@@ -5,7 +5,7 @@ import {
   Package, PackageCheck, Pencil, Plus, Printer, Receipt, RefreshCw, Save, Search, Send, Settings2, ShoppingCart,
   SlidersHorizontal, Sparkles, Star, Sun, Contrast, Trash2, TrendingUp, TriangleAlert, Trophy, Truck, Upload,
   User, Warehouse, X, XCircle, Clock, Eye, ArrowUpDown, Workflow, Command, Store, CircleDollarSign, Gavel, Lock, EyeOff,
-  ArrowDownLeft, ArrowUpRight, ExternalLink, History, Boxes, ChevronsUpDown, Calendar, BarChart3, Gauge, Layers, CornerDownLeft, BookOpen, ArrowLeftRight, ClipboardCheck, FileSpreadsheet, ListChecks, Hourglass, Image, Images, Expand, KeyRound, ZoomIn, ZoomOut, Minus, RotateCcw, PieChart, Table2, Users, Palette,
+  ArrowDownLeft, ArrowUpRight, ExternalLink, History, Boxes, ChevronsUpDown, Calendar, BarChart3, Gauge, Layers, CornerDownLeft, BookOpen, ArrowLeftRight, ClipboardCheck, FileSpreadsheet, ListChecks, Hourglass, Image, Images, Expand, KeyRound, ZoomIn, ZoomOut, Minus, RotateCcw, PieChart, Table2, Users, Palette, ListTree, Scale, Wallet, Sigma,
 } from 'lucide-vue-next'
 
 export const ICONS = {
@@ -15,5 +15,5 @@ export const ICONS = {
   Package, PackageCheck, Pencil, Plus, Printer, Receipt, RefreshCw, Save, Search, Send, Settings2, ShoppingCart,
   SlidersHorizontal, Sparkles, Star, Sun, Contrast, Trash2, TrendingUp, TriangleAlert, Trophy, Truck, Upload,
   User, Warehouse, X, XCircle, Clock, Eye, ArrowUpDown, Workflow, Command, Store, CircleDollarSign, Gavel, Lock, EyeOff,
-  ArrowDownLeft, ArrowUpRight, ExternalLink, History, Boxes, ChevronsUpDown, Calendar, BarChart3, Gauge, Layers, CornerDownLeft, BookOpen, ArrowLeftRight, ClipboardCheck, FileSpreadsheet, ListChecks, Hourglass, Image, Images, Expand, KeyRound, ZoomIn, ZoomOut, Minus, RotateCcw, PieChart, Table2, Users, Palette,
+  ArrowDownLeft, ArrowUpRight, ExternalLink, History, Boxes, ChevronsUpDown, Calendar, BarChart3, Gauge, Layers, CornerDownLeft, BookOpen, ArrowLeftRight, ClipboardCheck, FileSpreadsheet, ListChecks, Hourglass, Image, Images, Expand, KeyRound, ZoomIn, ZoomOut, Minus, RotateCcw, PieChart, Table2, Users, Palette, ListTree, Scale, Wallet, Sigma,
 }
